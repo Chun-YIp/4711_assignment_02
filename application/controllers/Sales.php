@@ -15,6 +15,13 @@ class Sales extends Application{
         else
             $this->summarize();
 
+        $this->load->helper('url');
+        foreach($_POST as $key=>$value){
+            if($value != '0') {
+                file_put_contents(__DIR__ . '/../logs/sales.log', "$value,$key\n", FILE_APPEND);
+            }
+        }
+        
         $recipeData = $this->recipes->getRecipes();
         $recipes = array();
 
@@ -26,7 +33,7 @@ class Sales extends Application{
             }
                 
             $stock = $this->stock->get($recipe->id);
-            $recipes[] = array('name' => $recipe->name, 'description' => $strIngredients, 'price' => $stock->price);
+            $recipes[] = array('name' => $recipe->name, 'description' => $strIngredients, 'price' => $stock->price, 'id' => $stock->id);
         }
 
         $this->data['sales'] = $recipes;
@@ -69,14 +76,6 @@ class Sales extends Application{
         $this->index();
     }
     
-    public function add($what) {
-        $order = new Order($this->session->userdata('order'));
-        $order->additem($what);
-        $this->session->set_userdata('order', (array)$order);
-        $this->keep_shopping();
-        redirect('/sales/neworder');
-    }
-    
     public function checkout() {
         $order = new Order($this->session->userdata('order'));
         // ignore invalid requests
@@ -88,9 +87,23 @@ class Sales extends Application{
     }
     
     public function examine($which) {
-        $order = new Order ('../data/order' . $which . '.xml');
+        $order = new Order('../data/order' . $which . '.xml');
         $stuff = $order->receipt();
         $this->data['content'] = $this->parsedown->parse($stuff);
         $this->render();
+    }
+    
+    public function add(){
+        $order = new Order($this->session->userdata('order'));
+    	foreach ($this->stock->getStock() as $stock) {
+    		$amount = $this->input->post($stock->id);
+    		if ($amount > 0 && $amount <= $stock->quantity) {
+    			$this->stock->sellStock($stock->id,$amount);
+                $order->additem($stock);
+    		}
+    	}
+        $this->session->set_userdata('order', (array)$order);
+        $this->keep_shopping();
+    	redirect('index.php');
     }
 }
