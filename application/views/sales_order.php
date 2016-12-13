@@ -5,7 +5,7 @@
 
 <div class="panel panel-danger">
     <div class="panel-heading">
-        <h3 class="panel-title text-center">Receipt</h3>
+        <h3 class="panel-title text-center">Receipt (Remove this later - Inside the sales_order.php view)</h3>
     </div>
     <table class="table">
         <thead>
@@ -13,16 +13,16 @@
                 <th>Item Name</th>
                 <th>Quantity</th>
                 <th>Price</th>
-                <th>Total</th>
             </tr>
         </thead>
         <tbody>
+        {stock}
             <tr>
                 <td>{name}</td>
                 <td>{quantity}</td>
                 <td>{price}</td>
-                <td><?php echo $price * $quantity; ?></td>
             </tr>
+        {/stock}
         </tbody>
     </table>
 </div>

@@ -1,7 +1,7 @@
 <div class="row">
     <div class="span8 offset1">
         <h2>Purchaseable items</h2>
-        <form method="POST" action="/Sales/sell">
+        <form method="POST" action="/sales/add">
 	         <div class="row">
 	            {sales}
 	            <div id="row">

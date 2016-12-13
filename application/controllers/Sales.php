@@ -62,7 +62,7 @@ class Sales extends Application{
         $stuff = $order->receipt();
         $this->data['receipt'] = $this->parsedown->parse($stuff);
         
-        $this->data['pagebody'] = 'sales';
+        $this->data['pagebody'] = 'sales_order';
         $source = $this->stock->getStock();
         $this->data['stock'] = $source;
         $this->render('template-shopping');
@@ -99,11 +99,11 @@ class Sales extends Application{
     		$amount = $this->input->post($stock->id);
     		if ($amount > 0 && $amount <= $stock->quantity) {
     			$this->stock->sellStock($stock->id,$amount);
-                $order->additem($stock);
+                $order->additem($stock, $amount);
     		}
     	}
         $this->session->set_userdata('order', (array)$order);
         $this->keep_shopping();
-    	redirect('index.php');
+    	redirect('/sales');
     }
 }
